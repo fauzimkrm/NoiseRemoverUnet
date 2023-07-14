@@ -18,6 +18,15 @@ parser.add_argument('--sliderate', '-sr', type=float, default=0.8, help='切出�
 args = parser.parse_args()
 #print(args.datawav)     #datawavのファイル名
 #print(args.labelwav)    #labelwavのファイル名
+
+def addpitch(input_file, output_file, pitch_shift):
+    # 音声データの読み込み
+    audio, sr = librosa.load(input_file,sr=16000)
+    # ピッチ変更を適用
+    shifted_audio = pyrb.pitch_shift(audio, sr, pitch_shift)
+    # 出力ファイルとして保存
+    sf.write(output_file, shifted_audio, sr)
+
 def kansuu(dwav,lwav):
   # パラメータ設定
   ## 入力する2つのwavファイル
