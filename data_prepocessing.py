@@ -17,15 +17,20 @@ import module.noisecopy as noisecopy
 parser = argparse.ArgumentParser()
 parser.add_argument('--sounddir', '-sd', type=str, default='dataset/sound/clear', help='音声ディレクトリ')
 parser.add_argument('--noisedir', '-nd', type=str, default='dataset/sound/noise', help='音声ディレクトリ')
+parser.add_argument('--snr', '-snr', type=str, default=0, help='Signal noise ration')
+parser.add_argument('--holdout', '-ho', type=str, default=0.8, help='Holdout validation method for dataset')
+parser.add_argument('--pitchswitch', '-ps', type=str, default=0, help='Pitch switch')
+parser.add_argument('--noisefilename', '-nfn', type=str, default="TrainingNoise", help='Noise file name')
 parser.add_argument('--noisysounddir', '-nsnd', type=str, default='dataset/data_prepocessing_result/mixedsound', help='重畳音声出力ディレクトリ')
+
 args = parser.parse_args()
 
 sound_dir = args.sounddir
 noise_dir = args.noisedir
-snr=-5
-ratio=0.9
-pitch=""
-nname="TrainingNoise"
+snr = args.snr
+ratio = args.holdout
+pitch= args.pitchswitch
+nname= args.noisefilename
 t=".wav"
 
 
@@ -38,6 +43,10 @@ if(noisesound.duration_seconds<600):
     noisecopy.ncopy(nname+t)
 
 for fname in os.listdir(sound_dir):
+    audio, sr = librosa.load(input_file,sr=16000)
+    # ピッチ変更を適用
+    shifted_audio = pyrb.pitch_shift(audio, sr, pitch_shift)
+
     #音声を読み込む
     cwavfile=wave.open(sound_dir+"/"+fname)
     #ノイズを読み込む
