@@ -11,7 +11,6 @@ import scipy.signal as sp
 import wave
 import argparse
 import array
-import module.cvtsndimg as cvtsndimg
 import glob
 
 from pydub import AudioSegment
@@ -164,7 +163,7 @@ def kansuu(dwav,lwav, snr, pitch):
   # wavファイルを読み込み，STFTに変換
   stft = {}
   for key, wav in wavs.items():
-    _, stft[key] = cvtsndimg.snd2stft(wav, nfft=nfft)
+    _, stft[key] = snd2stft(wav, nfft=nfft)
 
   # データのサイズを取得
   #print(stft['data'].shape)
@@ -178,9 +177,9 @@ def kansuu(dwav,lwav, snr, pitch):
   imgs = {}
   for key, dat in stft.items():
     # STFTからdBに変換
-    min_max, buf = cvtsndimg.stft2dB(stft_dat=dat)
+    min_max, buf = stft2dB(stft_dat=dat)
     # dBから画像に変換
-    imgs[key] = cvtsndimg.dB2img(buf, alpha=alpha)
+    imgs[key] = dB2img(buf, alpha=alpha)
   #cv2.imwrite('wavimg.png', imgs['data'])
   #cv2.imwrite('labimg.png', imgs['label'])
 
