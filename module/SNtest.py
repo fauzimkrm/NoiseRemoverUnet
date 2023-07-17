@@ -5,10 +5,13 @@ import numpy as np
 import math
 import random
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--sounddir', '-snd', type=str, default='dataset/sound', help='音声ディレクトリ')
-parser.add_argument('--noisysounddir', '-nsnd', type=str, default='dataset/data_prepocessing_result/mixedsound', help='重畳音声出力ディレクトリ')
-args = parser.parse_args()
+# parser = argparse.ArgumentParser()
+# parser.add_argument('--sounddir', '-snd', type=str, default='dataset/sound', help='音声ディレクトリ')
+# parser.add_argument('--noisysounddir', '-nsnd', type=str, default='dataset/data_prepocessing_result/mixedsound', help='重畳音声出力ディレクトリ')
+# args = parser.parse_args()
+
+sounddir = 'dataset/sound'
+noisysounddir = 'dataset/data_prepocessing_result/mixedsound'
 
 #wavファイルから振幅情報(amptitude)と振幅の二乗平均平方根(rms)を取得する
 def getamp_rms(wavfile):

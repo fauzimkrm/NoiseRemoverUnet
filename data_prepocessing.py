@@ -5,8 +5,11 @@ import array
 import numpy as np
 import math
 import random
+import librosa
 from pydub import AudioSegment
 import os
+import soundfile as sf
+from pyrubberband import pitch_shift
 
 import module.wav2img as wav2img
 import module.autoKanSuu as autoKanSuu
@@ -22,7 +25,6 @@ parser.add_argument('--holdout', '-ho', type=str, default=0.8, help='Holdout val
 parser.add_argument('--pitchswitch', '-ps', type=str, default=0, help='Pitch switch')
 parser.add_argument('--noisefilename', '-nfn', type=str, default="TrainingNoise", help='Noise file name')
 parser.add_argument('--noisysounddir', '-nsnd', type=str, default='dataset/data_prepocessing_result/mixedsound', help='重畳音声出力ディレクトリ')
-
 args = parser.parse_args()
 
 sound_dir = args.sounddir
@@ -43,12 +45,15 @@ if(noisesound.duration_seconds<600):
     noisecopy.ncopy(nname+t)
 
 for fname in os.listdir(sound_dir):
-    audio, sr = librosa.load(input_file,sr=16000)
-    # ピッチ変更を適用
-    shifted_audio = pyrb.pitch_shift(audio, sr, pitch_shift)
+    clearsound, sr = librosa.load(sound_dir+"/"+fname,sr=16000)
+    shifted_audio = pitch_shift(clearsound, sr, pitch)
+    temp_audio_file = "dataset/temp/audio/"+fname
+    sf.write(temp_audio_file, shifted_audio, sr)
 
     #音声を読み込む
-    cwavfile=wave.open(sound_dir+"/"+fname)
+    # cwavfile=wave.open(sound_dir+"/"+fname)
+    cwavfile = wave.open(temp_audio_file)
+    os.remove(temp_audio_file)
     #ノイズを読み込む
     nwavfile=wave.open(noise_dir+"/"+nname+t)
     #SN比でノイズの振幅調整
@@ -70,14 +75,14 @@ for fname in os.listdir(sound_dir):
         camp=camp*(32767/mixed_amp.max(axis=0))
         namp_new=namp_new*(32767/mixed_amp.max(axis=0))
     #ノイズ重畳音声の保存
-    noisy_wav=wave.Wave_write(args.noisysounddir+"/"+fname[:-4]+nname+"SN"+str(snr)+t)
+    noisy_wav=wave.Wave_write(args.noisysounddir+"/"+fname[:-4]+nname+"SN"+str(snr)+"Pitch"+pitch+t)
     noisy_wav.setparams(cwavfile.getparams())
     noisy_wav.writeframes(array.array('h', mixed_amp.astype(np.int16)))
     noisy_wav.close()
 
-    print(fname+nname+"SN"+str(snr)+t)
+    print(fname+nname+"SN"+str(snr)+"Pitch"+pitch+t)
     #ノイズなしとノイズ重畳の音声を画像に変換
-    wav2img.kansuu(args.sounddir+"/"+fname,args.noisysounddir+"/"+fname[:-4]+nname+"SN"+str(snr)+t)
+    wav2img.kansuu(args.sounddir+"/"+fname,args.noisysounddir+"/"+fname[:-4]+nname+"SN"+str(snr)+"Pitch"+pitch+t)
 
 #画像を訓練用データと評価用データにランダムで分割する
 autoKanSuu.IMG_split(ratio)

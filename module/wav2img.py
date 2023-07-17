@@ -9,13 +9,19 @@ import module.cvtsndimg as cvtsndimg
 import glob
 
 # 実行時引数，オプションの設定
-parser = argparse.ArgumentParser()
-parser.add_argument('--datadir', '-dd', type=str, default='dataset/temp/data', help='データ画像出力ディレクトリ')
-parser.add_argument('--labeldir', '-ld', type=str, default='dataset/temp/label', help='ラベル画像出力ディレクトリ')
-parser.add_argument('--nfft', '-nf', type=int, default=512, help='FFTのデータ長')
-parser.add_argument('--sliderate', '-sr', type=float, default=0.8, help='切出し位置のスライド率(0.0<sr<1.0)')
+# parser = argparse.ArgumentParser()
+# parser.add_argument('--datadir', '-dd', type=str, default='dataset/temp/data', help='データ画像出力ディレクトリ')
+# parser.add_argument('--labeldir', '-ld', type=str, default='dataset/temp/label', help='ラベル画像出力ディレクトリ')
+# parser.add_argument('--nfft', '-nf', type=int, default=512, help='FFTのデータ長')
+# parser.add_argument('--sliderate', '-sr', type=float, default=0.8, help='切出し位置のスライド率(0.0<sr<1.0)')
 
-args = parser.parse_args()
+# args = parser.parse_args()
+
+datadir = 'dataset/temp/data'
+labeldir = 'dataset/temp/label'
+nfft = 512
+sliderate = 0.8
+
 #print(args.datawav)     #datawavのファイル名
 #print(args.labelwav)    #labelwavのファイル名
 
@@ -32,9 +38,8 @@ def kansuu(dwav,lwav):
   ## 入力する2つのwavファイル
   wavs = {'data' : dwav, 'label' : lwav}
   ## 出力ディレクトリ
-  dirs = {'data' : args.datadir, 'label' : args.labeldir}
-  nfft = args.nfft
-  sr = args.sliderate
+  dirs = {'data' : datadir, 'label' : labeldir}
+  sr = sliderate
 
   # wavファイルを読み込み，STFTに変換
   stft = {}
@@ -63,16 +68,15 @@ def kansuu(dwav,lwav):
   sw = int(h * sr) # 切出し位置のスライド幅
 
   #ファイルを置き換えせず、新しいファイルを追加するためのコード
-  dir1=args.datadir      #dataフォルダのパス
-  fileName=glob.glob(dir1+'\*.png')    #dataフォルダの中のファイル名を取得
-  print(fileName)        #最後のファイル名を確認する
+  dir1=datadir      #dataフォルダのパス
+  fileName=glob.glob(dir1+'/*.png')    #dataフォルダの中のファイル名を取得
+  # print(fileName)        #最後のファイル名を確認する
   sumOfFile=(sum(os.path.isfile(os.path.join(dir1,name)) for name in os.listdir(dir1)))   #フォルダ内のファイル数を数える
   if(sumOfFile==0):        #フォルダが空いている場合
     nlfn=-(sw)
   else:
     lastFileName=fileName[-1]        #最後のファイル名を取得
     nlfn=lastFileName[-11:-4]       #最後のファイル名の数字の部分を取り出す
-    print(nlfn)
 
   
 #   print(nlfn)
