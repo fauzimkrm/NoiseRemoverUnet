@@ -9,6 +9,7 @@ import time
 import librosa
 from pydub import AudioSegment
 import os
+import shutil
 import soundfile as sf
 from pyrubberband import pitch_shift
 import module.data_prepocessing_tool as tools
@@ -16,9 +17,9 @@ import module.data_prepocessing_tool as tools
 parser = argparse.ArgumentParser()
 parser.add_argument('--sounddir', '-sd', type=str, default='dataset/sound/clear', help='音声ディレクトリ')
 parser.add_argument('--noisedir', '-nd', type=str, default='dataset/sound/noise', help='音声ディレクトリ')
-parser.add_argument('--snr', '-snr', type=str, default=0, help='Signal noise ration')
-parser.add_argument('--holdout', '-ho', type=str, default=0.9, help='Holdout validation method for dataset')
-parser.add_argument('--pitchswitch', '-ps', type=str, default=0, help='Pitch switch')
+parser.add_argument('--snr', '-snr', type=int, default=0, help='Signal noise ration')
+parser.add_argument('--holdout', '-ho', type=float, default=0.9, help='Holdout validation method for dataset')
+parser.add_argument('--pitchswitch', '-ps', type=int, default=0, help='Pitch switch')
 parser.add_argument('--noisefilename', '-nfn', type=str, default="TestNoise", help='Noise file name')
 parser.add_argument('--noisysounddir', '-nsnd', type=str, default='dataset/data_prepocessing_result/mixedsound', help='重畳音声出力ディレクトリ')
 args = parser.parse_args()
@@ -32,6 +33,7 @@ nname= args.noisefilename
 temp_dir = "dataset/temp/audio"
 t=".wav"
 
+os.makedirs(temp_dir,exist_ok=True)
 
 #学習データセットを格納するフォルダの作成
 tools.makeDirs()
@@ -82,8 +84,7 @@ for fname in os.listdir(sound_dir):
     tools.kansuu(args.sounddir+"/"+fname,args.noisysounddir+"/"+fname[:-4]+nname+"SN"+str(snr)+"Pitch"+str(pitch)+t, snr, pitch)
 
 #画像を訓練用データと評価用データにランダムで分割する
-tools.IMG_split(ratio)
+tools.IMG_split(float(ratio))
 print("終了") 
-# time.sleep(10)
-# for fname in os.listdir(temp_dir):
-#     os.remove(temp_dir+"/"+fname)
+
+shutil.rmtree(temp_dir, ignore_errors=False, onerror=None)

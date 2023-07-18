@@ -3,7 +3,8 @@ import argparse
 import os
 from sys import path
 # import keras, cv2, glob
-import cv2, glob
+import cv2
+import glob
 from tensorflow import keras
 import tensorflow as tf
 import numpy as np
@@ -36,8 +37,7 @@ args = parser.parse_args()
 project_name = args.projectname
 epochs = args.epoch
 batch_sizes = args.batchsize
-
-os.makedirs(project_name+"/",exist_ok=True)
+result_save_dir = "/"+project_name
 
 ##pdf化---設定
 plt.rcParams['pdf.fonttype'] = 42
@@ -49,10 +49,9 @@ path_Noise_Data=dir+"/in_train/"
 path_input_vali=dir+"/in_vali/"
 path_output_vali=dir+"/out_vali/"
 
-#保存先
-result_save_dir="/"+project_name
-os.makedirs(result_save_dir+"/PDF",exist_ok=True)
-os.makedirs(result_save_dir+"/PNG",exist_ok=True)
+# #保存先
+# os.makedirs(result_save_dir+"/PDF",exist_ok=True)
+# os.makedirs(result_save_dir+"/PNG",exist_ok=True)
 
 dir=path_train_Data
 image_size=256

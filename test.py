@@ -1,9 +1,9 @@
-# import csv
-# from sys import path
+import csv
+from sys import path
 import cv2
-# import tensorflow as tf
+import tensorflow as tf
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import argparse
 import glob
 import os
@@ -11,19 +11,19 @@ import module.data_prepocessing_tool as tool
 import librosa
 import soundfile as sf
 import shutil
-# from PIL import Image
-# from keras.layers import concatenate
-#from keras.optimizers import Adam,SGD,Nadam
-# from tensorflow.keras.optimizers import Adam,SGD,Nadam
-# from numpy.core.shape_base import block
-# from tensorflow.keras.layers import Conv2D,BatchNormalization,Activation,Dropout,Reshape
-# from tensorflow.python.keras import Input
-# from tensorflow.keras.models import Model
-# from tensorflow.python.keras.backend import binary_crossentropy, conv1d, one_hot, relu, sigmoid,set_session
-# from tensorflow.python.keras.layers.convolutional import UpSampling2D
-# from tensorflow.python.keras.layers.pooling import  MaxPooling2D,MaxPool2D
-# from keras.models import load_model
-# from matplotlib.backends.backend_pdf import PdfPages
+from PIL import Image
+from keras.layers import concatenate
+from keras.optimizers import Adam,SGD,Nadam
+from tensorflow.keras.optimizers import Adam,SGD,Nadam
+from numpy.core.shape_base import block
+from tensorflow.keras.layers import Conv2D,BatchNormalization,Activation,Dropout,Reshape
+from tensorflow.python.keras import Input
+from tensorflow.keras.models import Model
+from tensorflow.python.keras.backend import binary_crossentropy, conv1d, one_hot, relu, sigmoid,set_session
+from tensorflow.python.keras.layers.convolutional import UpSampling2D
+from tensorflow.python.keras.layers.pooling import  MaxPooling2D,MaxPool2D
+from keras.models import load_model
+from matplotlib.backends.backend_pdf import PdfPages
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--inputpath', '-ip', type=str, help='Input path')
@@ -34,14 +34,15 @@ args = parser.parse_args()
 input_path = args.inputpath
 output_name = args.outputname
 model_path = args.model
-os.makedirs('dataset/temp/test/data',exist_ok=True)
-os.makedirs('dataset/temp/test/label',exist_ok=True)
-os.makedirs('dataset/temp/test/result',exist_ok=True)
+datadir = 'dataset/temp/test/data'
+labeldir = 'dataset/temp/test/label'
+resultdir = 'dataset/temp/test/result'
+os.makedirs(datadir,exist_ok=True)
+os.makedirs(labeldir,exist_ok=True)
+os.makedirs(resultdir,exist_ok=True)
 
 # ==================== PREPROCESS DATA TEST =======================
 # data prepocessing variable
-datadir = 'dataset/temp/test/data'
-labeldir = 'dataset/temp/test/label'
 dirs = {'data' : datadir, 'label' : labeldir}
 sr = 0.8
 nfft = 512
@@ -189,3 +190,9 @@ isnd = librosa.griffinlim(stft, hop_length=128, win_length=512)
 
 # wavファイルに保存
 sf.write(outwav, isnd, sr, format='WAV', subtype='PCM_16')
+
+
+# ==================== delete temp dir =============================
+shutil.rmtree(datadir, ignore_errors=False, onerror=None)
+shutil.rmtree(labeldir, ignore_errors=False, onerror=None)
+shutil.rmtree(resultdir, ignore_errors=False, onerror=None)
