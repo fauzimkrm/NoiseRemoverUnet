@@ -30,14 +30,15 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--projectname', '-pn', type=str, default='project')
-parser.add_argument('--epoch', '-e', type=int, default=10)
+parser.add_argument('--epoch', '-e', type=int, default=2)
 parser.add_argument('--batchsize', '-bs', type=int, default=16)
 args = parser.parse_args()
 
 project_name = args.projectname
 epochs = args.epoch
 batch_sizes = args.batchsize
-result_save_dir = "/"+project_name
+result_save_dir = project_name
+os.makedirs(project_name,exist_ok=True)
 
 ##pdf化---設定
 plt.rcParams['pdf.fonttype'] = 42
@@ -50,8 +51,8 @@ path_input_vali=dir+"/in_vali/"
 path_output_vali=dir+"/out_vali/"
 
 # #保存先
-# os.makedirs(result_save_dir+"/PDF",exist_ok=True)
-# os.makedirs(result_save_dir+"/PNG",exist_ok=True)
+os.makedirs(result_save_dir+"/PDF",exist_ok=True)
+os.makedirs(result_save_dir+"/PNG",exist_ok=True)
 
 dir=path_train_Data
 image_size=256
@@ -90,21 +91,6 @@ Y=np.array(Y)
 Y= Y.astype('float32')
 Y=Y/255.0
 
-#Test
-# dir=path_test_Data
-# files=glob.glob(dir+"*.png")
-
-# for i,file in enumerate(files):
-#     image_gray=cv2.imread(file,0)#グレースケールで読み込み
-#     image=cv2.resize(image_gray,(image_size,image_size))#リサイズ
-#     data=np.array(image)#一元化
-#     Z.append(data)#設定
-#     #print(data.shape)
-
-# Z=np.array(Z)
-# Z= Z.astype('float32')
-# Z = Z / 255.0
-
 #Validation
 dir=path_input_vali
 files=glob.glob(dir+"*.png")
@@ -133,7 +119,6 @@ for i,file in enumerate(files):
 B=np.array(B)
 B= B.astype('float32')
 B = B / 255.0
-
 
 #unet
 def blocks(input,filt):
@@ -195,7 +180,6 @@ saver = CustomSaver()
 adam = keras.optimizers.Adam(lr=5e-4)
 autoencoder.compile(optimizer=adam, loss='mean_squared_error',metrics=['mae','mse','binary_crossentropy'])
 
-
 #訓練実行
 print("trainout="+str(len(X)))
 print("trainin="+str(len(Y)))
@@ -213,7 +197,7 @@ auto_fit=autoencoder.fit(Y,X,
 
 #モデル保存
 #autoencoder.save("./result/densya/m4096/save_modeldayo.h5")
-autoencoder.save(result_save_dir+"/"+project_name)
+autoencoder.save(result_save_dir+"/"+project_name+".h5")
 
 #各結果history
 loss=auto_fit.history['loss']

@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--sounddir', '-sd', type=str, default='dataset/sound/clear', help='音声ディレクトリ')
 parser.add_argument('--noisedir', '-nd', type=str, default='dataset/sound/noise', help='音声ディレクトリ')
 parser.add_argument('--snr', '-snr', type=int, default=0, help='Signal noise ration')
-parser.add_argument('--holdout', '-ho', type=float, default=0.9, help='Holdout validation method for dataset')
+parser.add_argument('--holdout', '-ho', type=float, default=1, help='Holdout validation method for dataset')
 parser.add_argument('--pitchswitch', '-ps', type=int, default=0, help='Pitch switch')
 parser.add_argument('--noisefilename', '-nfn', type=str, default="TestNoise", help='Noise file name')
 parser.add_argument('--noisysounddir', '-nsnd', type=str, default='dataset/data_prepocessing_result/mixedsound', help='重畳音声出力ディレクトリ')
@@ -44,14 +44,14 @@ if(noisesound.duration_seconds<600):
     tools.ncopy(nname+t)
 
 for fname in os.listdir(sound_dir):
-    clearsound, sr = librosa.load(sound_dir+"/"+fname,sr=16000)
-    shifted_audio = pitch_shift(clearsound, sr, pitch)
-    temp_audio_file = temp_dir+"/"+fname
-    sf.write(temp_audio_file, shifted_audio, sr)
+    # clearsound, sr = librosa.load(sound_dir+"/"+fname,sr=16000)
+    # shifted_audio = pitch_shift(clearsound, sr, pitch)
+    # temp_audio_file = temp_dir+"/"+fname
+    # sf.write(temp_audio_file, shifted_audio, sr)
 
     #音声を読み込む
-    # cwavfile=wave.open(sound_dir+"/"+fname)
-    cwavfile = wave.open(temp_audio_file)
+    cwavfile=wave.open(sound_dir+"/"+fname)
+    # cwavfile = wave.open(temp_audio_file)
     
     #ノイズを読み込む
     nwavfile=wave.open(noise_dir+"/"+nname+t)
@@ -87,4 +87,4 @@ for fname in os.listdir(sound_dir):
 tools.IMG_split(float(ratio))
 print("終了") 
 
-shutil.rmtree(temp_dir, ignore_errors=False, onerror=None)
+# shutil.rmtree(temp_dir, ignore_errors=False, onerror=None)

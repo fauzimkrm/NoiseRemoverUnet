@@ -28,7 +28,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 parser = argparse.ArgumentParser()
 parser.add_argument('--inputpath', '-ip', type=str, help='Input path')
 parser.add_argument('--outputname', '-on', type=str, help='Output name')
-parser.add_argument('--model', '-on', type=str, help='Model path')
+parser.add_argument('--model', '-m', type=str, help='Model path')
 args = parser.parse_args()
 
 input_path = args.inputpath
@@ -104,10 +104,7 @@ kansuu(input_path, input_path)
 # ================= PREDICT ========================
 # predict variable
 image_size=256
-dir="./result/densya" #door/timer　番号切り替え
-longdata="/SN10_P_50epoch_bs4_sr08"
-input="/input/"
-test_data = 'dataset/temp/test/data'
+test_data = 'dataset/temp/test/data/'
 files1=glob.glob(test_data+"*.png")
 inputIMG=[]
 
@@ -154,11 +151,11 @@ while(i<int(len(inputIMG))):
 # ====================== IMG2WAV =========================
 # パラメータ設定
 outwav = output_name
-imgdir = 'dataset/temp/test/result'
+imgdir = 'dataset/temp/test/result/'
 sr = 16000
 
 # 画像ファイルリスト作成
-imgs = np.sort(glob(os.path.join(imgdir, '*.png')))
+imgs = np.sort(glob.glob(os.path.join(imgdir, '*.png')))
 
 # 最初の画像を読み込み，連結用画像に貼り付ける
 img = cv2.imread(imgs[0], 0) # 階調画像で読み込み
@@ -193,6 +190,6 @@ sf.write(outwav, isnd, sr, format='WAV', subtype='PCM_16')
 
 
 # ==================== delete temp dir =============================
-shutil.rmtree(datadir, ignore_errors=False, onerror=None)
-shutil.rmtree(labeldir, ignore_errors=False, onerror=None)
-shutil.rmtree(resultdir, ignore_errors=False, onerror=None)
+# shutil.rmtree(datadir, ignore_errors=False, onerror=None)
+# shutil.rmtree(labeldir, ignore_errors=False, onerror=None)
+# shutil.rmtree(resultdir, ignore_errors=False, onerror=None)
